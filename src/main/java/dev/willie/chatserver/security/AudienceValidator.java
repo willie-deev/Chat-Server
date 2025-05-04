@@ -18,13 +18,6 @@ public class AudienceValidator implements OAuth2TokenValidator<Jwt>{
 			return OAuth2TokenValidatorResult.failure(new OAuth2Error("invalid_token", "Required audience not found", null));
 		}
 
-		// Optional: For RBAC validate the scopes of the JWT.
-//		String scopes = jwt.getClaimAsString("scope");
-//		System.out.println("scopes: " + scopes);
-//		if (scopes == null || !scopes.contains("read:profile")) {
-//			return OAuth2TokenValidatorResult.failure(new OAuth2Error("invalid_token", "Insufficient permission", null));
-//		}
-
 		return OAuth2TokenValidatorResult.success();
 	}
 }

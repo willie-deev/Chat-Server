@@ -1,0 +1,22 @@
+server:
+  port: 3000
+
+logto:
+  audience: http://localhost:3000
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "${ISSUER_URI:https://example.logto.app/oidc}"
+          jwk-set-uri: "${JWK_SET_URI:https://example.logto.app/oidc/jwks}"
+  datasource:
+    url: "${SPRING_DATASOURCE_URL:jdbc:mariadb://localhost:3306/}"
+    username: "${SPRING_DATASOURCE_USERNAME:dbuser}"
+    password: "${SPRING_DATASOURCE_PASSWORD:dbpass}"
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

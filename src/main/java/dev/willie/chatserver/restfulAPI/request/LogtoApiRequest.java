@@ -1,7 +1,7 @@
 package dev.willie.chatserver.restfulAPI.request;
 
 import dev.willie.chatserver.config.ConfigHandler;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -30,11 +30,11 @@ public class LogtoApiRequest{
 				.retrieve()
 				.bodyToMono(String.class)
 				.block();
-		System.out.println(response);
+//		System.out.println(response);
 		try{
 			JSONObject jsonObject = new JSONObject(response);
 			LogtoApiRequest.accessToken = (String)jsonObject.get("access_token");
-			System.out.println(LogtoApiRequest.accessToken);
+//			System.out.println(LogtoApiRequest.accessToken);
 		}catch(Exception ignored){
 
 		}

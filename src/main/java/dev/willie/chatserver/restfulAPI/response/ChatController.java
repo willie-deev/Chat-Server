@@ -6,7 +6,8 @@ import dev.willie.chatserver.data.UserRepository;
 import dev.willie.chatserver.impl.Message;
 import dev.willie.chatserver.impl.User;
 import dev.willie.chatserver.restfulAPI.request.LogtoApiRequest;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.json.JSONObject;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +23,12 @@ public class ChatController{
 	private final WebClient.Builder webClientBuilder;
 	private final UserRepository userRepository;
 	private final MessageRepository messageRepository;
-	public ChatController(WebClient.Builder webClientBuilder, UserRepository userRepository, MessageRepository messageRepository) {
+	private final SimpMessagingTemplate simpMessagingTemplate;
+	public ChatController(WebClient.Builder webClientBuilder, UserRepository userRepository, MessageRepository messageRepository, SimpMessagingTemplate simpMessagingTemplate) {
 		this.webClientBuilder = webClientBuilder;
 		this.userRepository = userRepository;
 		this.messageRepository = messageRepository;
+		this.simpMessagingTemplate = simpMessagingTemplate;
 	}
 
 	@GetMapping("/api/addProfile")
@@ -62,6 +65,12 @@ public class ChatController{
 			JSONObject bodyJson = new JSONObject(body);
 			Message message = new Message(messageRepository.count(), System.currentTimeMillis(), userId, (String)bodyJson.get("content"));
 			messageRepository.save(message);
+			Map<String, String> tmp = new HashMap<>();
+			tmp.put("sendTime", String.valueOf(message.getSendTime()));
+			User author = userRepository.findById(message.getSenderId()).orElseThrow();
+			tmp.put("user_email", author.getEmail());
+			tmp.put("content", message.getContent());
+			simpMessagingTemplate.convertAndSend("/topic/notify", tmp);
 		}catch(Exception ignored){
 			return "json parse failed";
 		}
